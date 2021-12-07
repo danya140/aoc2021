@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <limits>
 
 std::vector<int> readInput()
 {
@@ -28,7 +29,7 @@ std::vector<int> readInput()
  */
 int calculateNumberOfIncreases(const std::vector<int>& input)
 {
-    int lastNumber = INT_MAX;
+    int lastNumber = INT32_MAX;
     int increasedCount = 0;
 
     for(int number : input)
