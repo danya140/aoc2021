@@ -3,8 +3,21 @@ project(aoc2021)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_subdirectory(puzzle_day_1)
-add_subdirectory(puzzle_day_2)
-add_subdirectory(puzzle_day_3)
+MACRO(DIRLIST result curdir)
+    FILE(GLOB children RELATIVE ${curdir} ${curdir}/puzzle*)
+    SET(dirlist "")
+    FOREACH(child ${children})
+        IF(IS_DIRECTORY ${curdir}/${child})
+            LIST(APPEND dirlist ${child})
+        ENDIF()
+    ENDFOREACH()
+    SET(${result} ${dirlist})
+ENDMACRO()
+
+DIRLIST(DIRS ${CMAKE_CURRENT_SOURCE_DIR})
+
+foreach(subdir ${DIRS})
+    add_subdirectory(${subdir})
+endforeach()
 
 #add_executable(aoc2021 main.cpp)
