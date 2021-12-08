@@ -5,6 +5,7 @@
 #include <vector>
 #include <sstream>
 #include <iterator>
+#include <algorithm>
 
 inline std::vector<std::string> split(const std::string& str, char delimiter)
 {
@@ -41,4 +42,29 @@ inline std::string vector2String(const std::vector<T>& input)
     std::copy(input.begin(), input.end(), std::ostream_iterator<T>(stream, ""));
 
     return stream.str();
+}
+
+inline double median(const std::vector<int>& input)
+{
+    int size = input.size();
+    if (size == 0)
+    {
+        return 0;
+    }
+    std::vector<int> inputCopy(input);
+    std::sort(inputCopy.begin(), inputCopy.end());
+
+    double median = 0;
+
+    if(size % 2 == 0)
+    {
+        auto d = inputCopy[(size/2)] + inputCopy[(size/2) -1];
+        median = d/2;
+    }
+    else
+    {
+        median = inputCopy[size/2];
+    }
+
+    return median;
 }
