@@ -1,5 +1,3 @@
-#include "Simulator.h"
-
 #include "../helpers.h"
 
 #include <iostream>
@@ -8,8 +6,7 @@
 #include <vector>
 #include <functional>
 
-const char FILE_NAME[] = "input.txt";
-
+const char FILE_NAME[] = "input_example.txt";
 
 
 std::vector<int> readNumbers()
@@ -31,19 +28,9 @@ std::vector<int> readNumbers()
     return inputData;
 }
 
-void simulate(const std::vector<int>& fishes, int days)
-{
-    auto simulator = new Simulator(fishes);
-    simulator->simulate(days);
-
-    std::cout<< "Fish size after " << days <<" days is: "<< simulator->fishCount() << "\n";
-}
-
 int main()
 {
     std::vector<int> inputNumbers = readNumbers();
-    simulate(inputNumbers, 80);
-    simulate(inputNumbers, 256);
 
     return 0;
 }
