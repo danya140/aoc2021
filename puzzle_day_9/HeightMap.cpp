@@ -1,7 +1,16 @@
 #include "HeightMap.h"
 
 
+std::vector<std::pair<int, int>> createNeighbourCoordinate(int i, int j)
+{
+    std::vector<std::pair<int, int>> neighbours;
+    neighbours.push_back(std::make_pair(i+1, j));
+    neighbours.push_back(std::make_pair(i-1, j));
+    neighbours.push_back(std::make_pair(i, j+1));
+    neighbours.push_back(std::make_pair(i, j-1));
 
+    return neighbours;
+}
 
 HeightMap::HeightMap(const std::vector<std::string> &heightMap)
 {
@@ -56,4 +65,46 @@ std::vector<int> HeightMap::findLowestPoints()
     }
 
     return lowestPoints;
+}
+
+bool HeightMap::isBasinNeighbour(int i, int j)
+{
+    return i != -1 && j != -1
+            && i != m_heightMap.size() && j != m_heightMap[i].size()
+            && m_heightMap[i][j] != 9 && m_heightMap[i][j] != -1;
+}
+
+int HeightMap::mapNeighbour(int i, int j)
+{
+    int basinSize = 1; //self
+
+    m_heightMap[i][j] = -1; //mark as mapped
+
+    for (const auto coordinate : createNeighbourCoordinate(i, j))
+    {
+        if(isBasinNeighbour(coordinate.first, coordinate.second))
+        {
+            basinSize += mapNeighbour(coordinate.first, coordinate.second);
+        }
+    }
+
+    return basinSize;
+}
+
+std::vector<int> HeightMap::mapBasins()
+{
+    std::vector<int> basins;
+
+    for (int i = 0; i < m_heightMap.size(); ++i)
+    {
+        for (int j = 0; j < m_heightMap[i].size(); ++j)
+        {
+            if(m_heightMap[i][j] != 9 && m_heightMap[i][j] != -1)
+            {
+                basins.push_back(mapNeighbour(i, j));
+            }
+        }
+    }
+
+    return basins;
 }

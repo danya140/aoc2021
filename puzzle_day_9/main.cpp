@@ -42,12 +42,27 @@ void calculateRisk(HeightMap* heightMap)
     std::cout << "Sum of risk level: " << risk << "\n";
 }
 
+void findBiggestBasins(HeightMap* heightMap)
+{
+    auto basins = heightMap->mapBasins();
+    std::sort(basins.rbegin(), basins.rend());
+
+    int answer = 1;
+    for (int i = 0; i < 3; ++i)
+    {
+        answer *= basins[i];
+    }
+
+    std::cout<< "Multiplication of top 3 basins: " << answer;
+}
+
 int main()
 {
     std::vector<std::string> inputNumbers = readNumbers();
 
     auto heightMap = new HeightMap(inputNumbers);
     calculateRisk(heightMap);
+    findBiggestBasins(heightMap);
 
     return 0;
 }
