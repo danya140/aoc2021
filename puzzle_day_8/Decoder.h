@@ -4,18 +4,7 @@
 
 #include <map>
 
-// Numbers segments sizes
-enum Sizes
-{
-    ONE = 2,
-    TWO = 5,
-    FOUR = 4,
-    SEVEN = 3,
-    EIGHT = 7
-};
-
-
-enum Segments
+enum Segment
 {
     LEFT_UP,
     UP,
@@ -24,12 +13,6 @@ enum Segments
     RIGHT_DOWN,
     DOWN,
     LEFT_DOWN
-};
-
-struct DigitGuess
-{
-    std::vector<Segments> m_segments;
-    std::vector<char> m_signals;
 };
 
 class Decoder
@@ -50,4 +33,6 @@ private:
     std::map<int, std::string> m_decodedDigits;
 
     std::map<int, int> m_sizes;
+
+    std::map<int, std::vector<Segment>> m_digitStructure;
 };

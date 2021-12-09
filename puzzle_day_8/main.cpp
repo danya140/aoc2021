@@ -10,7 +10,7 @@
 #include <numeric>
 #include <cmath>
 
-const char FILE_NAME[] = "input.txt";
+const char FILE_NAME[] = "input_example.txt";
 
 
 std::vector<std::string> readNumbers()
@@ -45,8 +45,10 @@ void decodeAll(const std::vector<Decoder*>& decoders)
 {
     decodeEasy(decoders);
 
-    //collect full signal map
-    std::map<int, std::vector<std::string>> decodedDigits;
+    for (const auto& decoder : decoders)
+    {
+        decoder->decodeDigits();
+    }
 }
 
 int main()
