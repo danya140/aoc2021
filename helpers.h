@@ -85,20 +85,3 @@ inline bool containsAll(const std::string& str, const std::string& searchPattern
 
     return intersection.size() == pattern.size();
 }
-
-inline bool containsNothing(const std::string& str, const std::string& searchPattern)
-{
-    std::string sortedStr(str);
-    std::string pattern(searchPattern);
-
-    std::sort(sortedStr.begin(), sortedStr.end());
-    std::sort(pattern.begin(), pattern.end());
-
-    std::string intersection;
-
-    std::set_intersection(sortedStr.begin(), sortedStr.end(),
-                          pattern.begin(), pattern.end(),
-                          std::back_inserter(intersection));
-
-    return intersection.empty();
-}

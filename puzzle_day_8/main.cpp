@@ -10,7 +10,7 @@
 #include <numeric>
 #include <cmath>
 
-const char FILE_NAME[] = "input_example.txt";
+const char FILE_NAME[] = "input.txt";
 
 
 std::vector<std::string> readNumbers()
@@ -37,7 +37,7 @@ void decodeEasy(const std::vector<Decoder*>& decoders)
     {
         easyCounter += decoder->decodeEasyNumbers();
     }
-    std::cout << "Total number of easy numbers: " << easyCounter;
+    std::cout << "Total number of easy numbers: " << easyCounter << "\n";
 }
 
 
@@ -45,10 +45,13 @@ void decodeAll(const std::vector<Decoder*>& decoders)
 {
     decodeEasy(decoders);
 
+    int decodedSum = 0;
     for (const auto& decoder : decoders)
     {
-        decoder->decodeDigits();
+        decodedSum += decoder->decodeDigits();
     }
+
+    std::cout<< "Sum of all decoded numbers: " << decodedSum;
 }
 
 int main()

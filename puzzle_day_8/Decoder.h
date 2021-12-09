@@ -24,7 +24,10 @@ public:
     int decodeEasyNumbers();
     int decodeEasyNumbers(int number, int length);
 
-    void decodeDigits();
+    int decodeDigits();
+
+private:
+    void decipherAll();
 
 private:
     std::vector<std::string> m_signals;
@@ -34,5 +37,6 @@ private:
 
     std::map<int, int> m_sizes;
 
+    std::map<Segment, char> m_segmentMap;
     std::map<int, std::vector<Segment>> m_digitStructure;
 };

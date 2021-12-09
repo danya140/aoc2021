@@ -1,6 +1,7 @@
 #include "Decoder.h"
 
 #include <cassert>
+#include <set>
 
 Decoder::Decoder(const std::string& line)
 {
@@ -10,8 +11,21 @@ Decoder::Decoder(const std::string& line)
     m_signals = split(splitedData[0], ' ');
     m_digits = split(splitedData[1], ' ');
 
+    //sort
+    for (auto& signal : m_signals)
+    {
+        std::sort(signal.begin(), signal.end());
+    }
+
+    for (auto& digit : m_digits)
+    {
+        std::sort(digit.begin(), digit.end());
+    }
+
+
     m_sizes =
         {
+            {0, 6},
             {1, 2},
             {2, 5},
             {3, 5},
@@ -25,6 +39,7 @@ Decoder::Decoder(const std::string& line)
 
     m_digitStructure =
         {
+            {0, {RIGHT_UP, RIGHT_DOWN, DOWN, LEFT_DOWN, LEFT_UP}},
             {1, {RIGHT_UP, RIGHT_DOWN}},
             {2, {UP, RIGHT_UP, MIDDLE, LEFT_DOWN, DOWN}},
             {3, {UP, RIGHT_UP, MIDDLE, RIGHT_DOWN, DOWN}},
@@ -59,78 +74,124 @@ int Decoder::decodeEasyNumbers(int number, int length)
             entryCounter++;
         }
     }
+    for (const auto& digit : m_signals)
+    {
+        if(digit.size() == length)
+        {
+            m_decodedDigits[number] = digit;
+        }
+    }
 
     return entryCounter;
 }
 
-void Decoder::decodeDigits()
+void Decoder::decipherAll()
 {
-    std::vector<std::string> undecodedDigits(m_digits.begin(), m_digits.end());
+    std::set<std::string> undecodedDigits(m_digits.begin(), m_digits.end());
+    std::copy(m_signals.begin(), m_signals.end(), std::inserter(undecodedDigits, undecodedDigits.begin()));
 
     for (const auto& pair : m_decodedDigits)
     {
         auto it = std::find(undecodedDigits.begin(), undecodedDigits.end(), pair.second);
-        if(it != undecodedDigits.end())
+        while(it != undecodedDigits.end())
         {
             undecodedDigits.erase(it);
+            it = std::find(undecodedDigits.begin(), undecodedDigits.end(), pair.second);
         }
     }
 
-    std::vector<Segment> missingSegments = m_digitStructure[8];
-    std::string missingSignal = "abcdefg";
+    std::vector<char> upSegment;
+    std::set_difference(m_decodedDigits[7].begin(), m_decodedDigits[7].end(), m_decodedDigits[1].begin(), m_decodedDigits[1].end(), std::back_inserter(upSegment));
+    m_segmentMap[UP] = upSegment[0];
+
+
+    //decode 9. it contains 7 and 4 signals
+    std::set<char> ninePattern(m_decodedDigits[4].begin(), m_decodedDigits[4].end());
+    std::copy(m_decodedDigits[7].begin(), m_decodedDigits[7].end(), std::inserter(ninePattern, ninePattern.begin()));
+
+    std::set<char> sixPattern;
+    std::set_difference(m_decodedDigits[8].begin(), m_decodedDigits[8].end(),
+                        m_decodedDigits[1].begin(), m_decodedDigits[1].end(),
+                        std::inserter(sixPattern, sixPattern.begin()));
+
+    for (const auto& signal : undecodedDigits)
+    {
+        if(containsAll(signal, std::string(sixPattern.begin(), sixPattern.end())))
+        {
+            m_decodedDigits[6] = signal;
+        }
+        else if(containsAll(signal, std::string(ninePattern.begin(), ninePattern.end())))
+        {
+            m_decodedDigits[9] = signal;
+        }
+    }
+
+    std::vector<char> rightUpSegment;
+    std::set_difference(m_decodedDigits[8].begin(), m_decodedDigits[8].end(),
+                        m_decodedDigits[6].begin(), m_decodedDigits[6].end(),
+                        std::back_inserter(rightUpSegment));
+    m_segmentMap[RIGHT_UP] = rightUpSegment[0];
+
+    std::vector<char> rightDownSegment;
+    std::set_difference(m_decodedDigits[8].begin(), m_decodedDigits[8].end(),
+                        m_decodedDigits[9].begin(), m_decodedDigits[9].end(),
+                        std::back_inserter(rightDownSegment));
+    m_segmentMap[LEFT_DOWN] = rightDownSegment[0];
+
+    std::vector<char> downSegment;
+    std::set_difference(m_decodedDigits[9].begin(), m_decodedDigits[9].end(),
+                        m_decodedDigits[4].begin(), m_decodedDigits[4].end(),
+                        std::back_inserter(downSegment));
+    downSegment.erase(std::remove(downSegment.begin(), downSegment.end(), m_segmentMap[UP]), downSegment.end());
+    m_segmentMap[DOWN] = downSegment[0];
+
+    m_decodedDigits[5] = m_decodedDigits[9];
+    m_decodedDigits[5].erase(std::remove(m_decodedDigits[5].begin(), m_decodedDigits[5].end(), m_segmentMap[RIGHT_UP]), m_decodedDigits[5].end());
+
+    //clean up undecoded
     for (const auto& pair : m_decodedDigits)
     {
-        if(pair.first == 8)
+        auto it = std::find(undecodedDigits.begin(), undecodedDigits.end(), pair.second);
+        while(it != undecodedDigits.end())
         {
-            continue;
-        }
-
-        for (const auto& digit : m_digitStructure[pair.first])
-        {
-            auto it = std::find(missingSegments.begin(), missingSegments.end(), digit);
-            if(it != missingSegments.end())
-            {
-                missingSegments.erase(it);
-            }
-        }
-
-        for (const auto& letter : pair.second)
-        {
-            missingSignal.erase(std::remove(missingSignal.begin(), missingSignal.end(), letter), missingSignal.end());
+            undecodedDigits.erase(it);
+            it = std::find(undecodedDigits.begin(), undecodedDigits.end(), pair.second);
         }
     }
 
-    //Collect list of digit for undecodedDigits
-    std::map<std::string, std::vector<int>> undecodedMap;
-    for (const auto signal : undecodedDigits)
+    for (const auto& signal : undecodedDigits)
     {
-        for (const auto& pair : m_sizes)
+        if (signal.size() == m_sizes[0])
         {
-            if (signal.size() == pair.second)
-            {
-                undecodedMap[signal].push_back(pair.first);
-            }
+            m_decodedDigits[0] = signal;
+        }
+        else if (containsAll(signal, m_decodedDigits[1]))
+        {
+            m_decodedDigits[3] = signal;
+        }
+        else
+        {
+            m_decodedDigits[2] = signal;
         }
     }
+}
 
-    std::sort(missingSegments.begin(), missingSegments.end());
-    //try to decode
-    for (const auto& pair : undecodedMap)
+int Decoder::decodeDigits()
+{
+    decipherAll();
+    int result = 0;
+
+    int multiplier = 1000;
+    for (const auto& signal : m_digits)
     {
-        for (const auto& digit : pair.second)
-        {
-            auto digitSegments = m_digitStructure[digit];
-            std::sort(digitSegments.begin(), digitSegments.end());
-
-            std::vector<Segment> intersection;
-            std::set_intersection(missingSegments.begin(), missingSegments.end(),
-                                  digitSegments.begin(), digitSegments.end(),
-                                  std::back_inserter(intersection));
-
-            if (intersection.size() != missingSegments.size())
-            {
-                m_decodedDigits[digit] = pair.first;
-            }
-        }
+        auto it = std::find_if(m_decodedDigits.begin(), m_decodedDigits.end(),
+                                   [signal](const std::pair<int, std::string>& pair)
+                                   {
+                                        return pair.second == signal;
+                                   });
+        result += it->first * multiplier;
+        multiplier /= 10;
     }
+
+    return result;
 }
