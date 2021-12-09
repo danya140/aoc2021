@@ -1,3 +1,5 @@
+#include "Decoder.h"
+
 #include "../helpers.h"
 
 #include <iostream>
@@ -11,28 +13,54 @@
 const char FILE_NAME[] = "input.txt";
 
 
-std::vector<int> readNumbers()
+std::vector<std::string> readNumbers()
 {
     std::ifstream file(FILE_NAME);
-
-    std::vector<int> inputData;
+    std::vector<std::string> inputData;
 
     if(file.is_open())
     {
         std::string line;
-        std::getline(file, line);
-        for (const auto& number : split(line, ','))
+        while(getline(file, line))
         {
-            inputData.push_back(std::stoi(number));
+            inputData.push_back(line);
         }
     }
 
     return inputData;
 }
 
+void decodeEasy(const std::vector<Decoder*>& decoders)
+{
+    int easyCounter = 0;
+    for (const auto& decoder : decoders)
+    {
+        easyCounter += decoder->decodeEasyNumbers();
+    }
+    std::cout << "Total number of easy numbers: " << easyCounter;
+}
+
+
+void decodeAll(const std::vector<Decoder*>& decoders)
+{
+    decodeEasy(decoders);
+
+    //collect full signal map
+    std::map<int, std::vector<std::string>> decodedDigits;
+}
+
 int main()
 {
-    std::vector<int> inputNumbers = readNumbers();
+    std::vector<std::string> inputNumbers = readNumbers();
+
+    std::vector<Decoder*> decoders;
+
+    for (const auto& line : inputNumbers)
+    {
+        decoders.push_back(new Decoder(line));
+    }
+
+    decodeAll(decoders);
 
     return 0;
 }
