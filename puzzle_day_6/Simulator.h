@@ -17,9 +17,9 @@ public:
     Simulator(const std::vector<int>& fishes);
 
     /**
-     * Simulate fish growth for @a days
+     * Simulate fish growth for @a steps
      */
-    void simulate(int days);
+    void simulate(int steps);
 
     /**
      * Return current number of fishes

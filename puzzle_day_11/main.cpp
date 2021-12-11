@@ -1,3 +1,5 @@
+#include "Simulator.h"
+
 #include "../helpers.h"
 
 #include <iostream>
@@ -32,6 +34,13 @@ std::vector<std::string> readNumbers()
 int main()
 {
     std::vector<std::string> inputNumbers = readNumbers();
+    auto simulator = new Simulator(inputNumbers);
+    simulator->simulate(100);
+
+    std::cout << "Octopuses flashed " << simulator->flashCount() << " times\n";
+
+    simulator->simulate();
+    std::cout << "All octopuses flash at the same time at " << simulator->step() << " step\n";
 
     return 0;
 }
