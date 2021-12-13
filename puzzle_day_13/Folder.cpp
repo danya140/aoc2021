@@ -46,7 +46,14 @@ void Folder::print()
     {
         for (const auto& point : line)
         {
-            std::cout << point;
+            if(point == '#')
+            {
+                std::cout<< "█";
+            }
+            else
+            {
+                std::cout << " ";
+            }
         }
         std::cout << std::endl;
     }
