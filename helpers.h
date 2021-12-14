@@ -6,6 +6,8 @@
 #include <sstream>
 #include <iterator>
 #include <algorithm>
+#include <chrono>
+#include <cassert>
 
 inline std::vector<std::string> split(const std::string& str, char delimiter)
 {
@@ -85,3 +87,8 @@ inline bool containsAll(const std::string& str, const std::string& searchPattern
 
     return intersection.size() == pattern.size();
 }
+
+#define START_TIMER(point) int point_##point = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+#define STOP_TIMER(point) int stop_point_##point = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count(); \
+    std::cout << "execution time for point " << #point << ": " << stop_point_##point - point_##point << std::endl; \
+

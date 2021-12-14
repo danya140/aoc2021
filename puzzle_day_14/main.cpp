@@ -59,8 +59,9 @@ int main()
 
     std::cout<< "After 10 steps polymer score(count of most common - least common): "<< calculator->polymerScore() << "\n";
 
-    calculator->simulateGrowth(30);
-
+    START_TIMER(1)
+    calculator->simulateGrowth(40);
+    STOP_TIMER(1)
     std::cout<< "After 40 steps polymer score(count of most common - least common): "<< calculator->polymerScore() << "\n";
 
     return 0;
