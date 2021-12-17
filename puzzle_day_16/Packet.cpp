@@ -12,13 +12,14 @@ long long int readBits(const std::vector<int> &bits, int length, int start)
 {
     long long int result = 0;
 
-    std::vector<int> reverseBits;
+    std::vector<long long int> reverseBits;
     std::copy(bits.begin() + start, bits.begin()  + start + length, std::back_inserter(reverseBits));
     std::reverse(reverseBits.begin(), reverseBits.end());
 
     for (int i = 0; i < length; ++i)
     {
         result += reverseBits[i] * std::pow(2, i);
+        assert(result >= 0);
     }
     return result;
 }
@@ -80,7 +81,7 @@ Packet* Packet::parsePacket(const std::vector<int> &bits)
     return new Packet(header, data, HEADER_SIZE + realData.size());
 }
 
-Packet::Packet(Header header, int data, int size)
+Packet::Packet(Header header, long long int data, int size)
     : m_header(header),
       m_data(data),
       m_size(size)
@@ -179,7 +180,9 @@ long long int OperatorPacket::doAction()
 
     for (const auto& subPacket : m_packets)
     {
-        subPacketsValues.push_back(subPacket->doAction());
+        auto value = subPacket->doAction();
+        assert(value >= 0);
+        subPacketsValues.push_back(value);
     }
 
     long long int result = 0;
@@ -190,7 +193,7 @@ long long int OperatorPacket::doAction()
             result = std::accumulate(subPacketsValues.begin(), subPacketsValues.end(), result);
             break;
         case 1:
-            result = std::accumulate(subPacketsValues.begin(), subPacketsValues.end(), 1, std::multiplies<long long int>());
+            result = std::accumulate(subPacketsValues.begin(), subPacketsValues.end(), ++result, std::multiplies<long long int>());
             break;
         case 2:
             std::sort(subPacketsValues.begin(), subPacketsValues.end());
@@ -214,5 +217,6 @@ long long int OperatorPacket::doAction()
             break;
     }
 
+    assert(result >= 0);
     return result;
 }

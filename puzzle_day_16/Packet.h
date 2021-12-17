@@ -21,7 +21,7 @@ class Packet
 {
 public:
 
-    Packet(Header header, int data, int size);
+    Packet(Header header, long long int data, int size);
 
     int size();
 
