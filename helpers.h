@@ -8,6 +8,8 @@
 #include <algorithm>
 #include <chrono>
 #include <cassert>
+#include <cmath>
+#include <numeric>
 
 inline std::vector<std::string> split(const std::string& str, char delimiter)
 {
