@@ -16,17 +16,25 @@ struct Header
     int m_type;
 };
 
-
 class Packet
 {
 public:
 
     Packet(Header header, long long int data, int size);
 
-    int size();
+    /**
+     * @return size of packet in bits
+     */
+    int size() const;
 
+    /**
+     * @return Sum of all inner packets versions + this packet version
+     */
     virtual int versions();
 
+    /**
+     * @return data
+     */
     virtual long long int doAction();
 
     static Packet* parsePacket(const std::vector<int>& bits);
@@ -36,15 +44,4 @@ protected:
     long long int m_data;
     int m_size; //in bits
     std::vector<Packet*> m_packets; //for easy debug its here
-};
-
-class OperatorPacket : public Packet
-{
-public:
-    OperatorPacket(Header header, const std::vector<Packet*>& packets, int size, int data = 0);
-
-    long long int doAction() override;
-
-    static OperatorPacket* parseOperatorPacket(const std::vector<int>& bits);
-
 };

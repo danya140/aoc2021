@@ -1,5 +1,6 @@
 #include "../helpers.h"
-#include "Packet.h"
+
+#include "ParserHelpers.h"
 
 #include <iostream>
 #include <fstream>
@@ -58,14 +59,12 @@ std::string readNumbers()
     return inputData;
 }
 
-
 int main()
 {
     std::vector<int> inputNumbers = convertHex(readNumbers());
-    auto packet = OperatorPacket::parseOperatorPacket(inputNumbers);
+    auto packet = parsePacketByType(inputNumbers);
 
     std::cout << " Sum of all versions: " << packet->versions() << "\n";
-
     std::cout << " Result value: " << packet->doAction() << "\n";
 
     return 0;
