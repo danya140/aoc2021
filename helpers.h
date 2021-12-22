@@ -10,6 +10,7 @@
 #include <cassert>
 #include <cmath>
 #include <numeric>
+#include <set>
 
 inline std::vector<std::string> split(const std::string& str, char delimiter)
 {
