@@ -43,7 +43,7 @@ long long int TrajectoryCalculator::findHighestYPosition()
 int TrajectoryCalculator::collectHittingVelocities()
 {
     std::vector<std::pair<int, int>> velocities;
-    for (int x = m_xTarget.first * -1; x < m_xTarget.second; ++x)
+    for (int x = m_xTarget.first * -1; x < m_xTarget.second + 500; ++x)
     {
         for (int y = m_yTarget.first - 1000; y < m_yTarget.second + 10000; ++y)
         {

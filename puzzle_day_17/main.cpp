@@ -11,7 +11,7 @@
 #include <cmath>
 #include <map>
 
-const char FILE_NAME[] = "input_example.txt";
+const char FILE_NAME[] = "input.txt";
 
 std::string readNumbers()
 {

@@ -50,6 +50,11 @@ public:
     TrajectoryCalculator(const std::string& target);
 
     long long int findHighestYPosition();
+
+    /**
+     * Brute force solution of finding all velocities with which probe will hit target
+     * @return
+     */
     int collectHittingVelocities();
 
 private:
